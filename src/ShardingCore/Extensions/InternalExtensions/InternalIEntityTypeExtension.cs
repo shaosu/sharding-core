@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,16 @@ namespace ShardingCore.Extensions.InternalExtensions
         public static string GetEntityTypeTableName(this IEntityType entityType)
         {
 #if !EFCORE2
-            var tableName = entityType.GetTableName();
+            string tableName;
+            var nnn = entityType.ClrType.GetCustomAttributes(typeof(TableAttribute), false) as TableAttribute[];
+            if (nnn.Length > 0)
+            {
+                tableName = nnn[0].Name;
+            }
+            else
+            {
+                tableName = entityType.GetTableName();
+            } 
 #endif
 #if EFCORE2
             var tableName = entityType.Relational().TableName;
